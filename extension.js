@@ -36,10 +36,15 @@
 // }
 
 
+
+
+
+
+
+
 const vscode = require('vscode');
 
 function activate(context) {
-    // 注册转换为大写的命令
     let convertToUpperCase = vscode.commands.registerCommand('extension.convertToUpperCase', function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -56,7 +61,6 @@ function activate(context) {
         }
     });
 
-    // 注册转换为小写的命令
     let convertToLowerCase = vscode.commands.registerCommand('extension.convertToLowerCase', function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
