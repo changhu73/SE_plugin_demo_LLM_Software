@@ -20,6 +20,10 @@
       {
         "command": "extension.convertToLowerCase",
         "title": "Convert Selected Text to Lowercase"
+      },
+      {
+        "command": "extension.generateComment",
+        "title": "Generate Comment for Selection"
       }
     ],
     "keybindings": [
@@ -31,6 +35,11 @@
       {
         "command": "extension.convertToLowerCase",
         "key": "ctrl+shift+l",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "extension.generateComment",
+        "key": "ctrl+alt+c",
         "when": "editorTextFocus"
       }
     ]
