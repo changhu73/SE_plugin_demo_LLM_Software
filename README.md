@@ -1,5 +1,5 @@
 
-# VS Code Plugin Development Guide(SE-GROUP6)
+# VS Code Plugin Development(SE-GROUP6)
 
 ## 1. Environment Setup
 
