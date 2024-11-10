@@ -212,7 +212,7 @@ function activate(context) {
                 if (translatedText) {
                     // Replace the selected text with the translated comment
                     editor.edit(editBuilder => {
-                        editBuilder.insert(selection.start, `// ${translatedText}\n`);
+                        editBuilder.insert(selection.start, ` ${translatedText}\n`);
                     });
                 }
             } catch (error) {
