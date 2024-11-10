@@ -24,6 +24,10 @@
       {
         "command": "extension.generateComment",
         "title": "Generate Comment for Selection"
+      },
+      {
+        "command": "extension.translateComment",
+        "title": "Generate Translation for Selected Comment"
       }
     ],
     "keybindings": [
@@ -40,6 +44,11 @@
       {
         "command": "extension.generateComment",
         "key": "ctrl+alt+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "extension.translateComment",
+        "key": "ctrl+alt+r",
         "when": "editorTextFocus"
       }
     ]
