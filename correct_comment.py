@@ -18,7 +18,7 @@ def generate_comment(code_snippet):
         messages=[
             {
                 "role": "user",
-                "content": f"Please write the correct comments according to the content of the code:\n\n{code_snippet}"
+                "content": f"Please revise the corresponding comments based on the code content and retain the original format:\n\n{code_snippet}"
             }
         ]
     )

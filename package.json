@@ -28,6 +28,10 @@
       {
         "command": "extension.translateComment",
         "title": "Generate Translation for Selected Comment"
+      },
+      {
+        "command": "extension.correctComment",
+        "title": "Correct Comment for Selected Comment & Code"
       }
     ],
     "keybindings": [
@@ -49,6 +53,11 @@
       {
         "command": "extension.translateComment",
         "key": "ctrl+alt+r",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "extension.correctComment",
+        "key": "ctrl+alt+q",
         "when": "editorTextFocus"
       }
     ]

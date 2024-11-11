@@ -34,6 +34,19 @@ function translateToChinese(codeSnippet) {
     });
 }
 
+function correctCommentText(commentText) {
+    return new Promise((resolve, reject) => {
+        const pythonPath = path.join(__dirname, 'correct_comment.py');
+        execFile('python', [pythonPath, commentText], (error, stdout, stderr) => {
+            if (error) {
+                reject(`Error: ${stderr}`);
+            } else {
+                resolve(stdout.trim());
+            }
+        });
+    });
+}
+
 function activate(context) {
     // Command to convert selected text to uppercase
     let convertToUpperCase = vscode.commands.registerCommand('extension.convertToUpperCase', function () {
@@ -121,11 +134,35 @@ function activate(context) {
         }
     });
 
+    let correctComment = vscode.commands.registerCommand('extension.correctComment', async function () {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const selection = editor.selection;
+            const selectedText = editor.document.getText(selection);
+            if (!selectedText) {
+                vscode.window.showInformationMessage('Please select a comment to correct');
+                return;
+            }
+
+            try {
+                const correctedText = await correctCommentText(selectedText);
+                if (correctedText) {
+                    editor.edit(editBuilder => {
+                        editBuilder.replace(selection, correctedText);
+                    });
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage('Failed to correct comment: ' + error.message);
+            }
+        }
+    });
+
     // Register the commands
     context.subscriptions.push(convertToUpperCase);
     context.subscriptions.push(convertToLowerCase);
     context.subscriptions.push(generateComment);
     context.subscriptions.push(translateComment);
+    context.subscriptions.push(correctComment);
 }
 
 function deactivate() {}
