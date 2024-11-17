@@ -82,7 +82,6 @@ function activate(context) {
         }
     });
 
-    // Command to generate comment for selected code
     let generateComment = vscode.commands.registerCommand('extension.generateComment', async function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -92,21 +91,59 @@ function activate(context) {
                 vscode.window.showInformationMessage('Please select code to generate comment');
                 return;
             }
-
+    
             try {
                 // Call the Python script to generate the comment
                 const commentText = await runPythonScript(selectedText);
                 if (commentText) {
-                    // Insert the generated comment at the start of the selected code
-                    editor.edit(editBuilder => {
-                        editBuilder.insert(selection.start, `// ${commentText}\n`);
-                    });
+                    // Show a confirmation dialog with options
+                    const choice = await vscode.window.showInformationMessage(
+                        `Generated comment: "${commentText}". Do you want to accept this comment?`,
+                        { modal: false },
+                        'Accept', 'Reject'
+                    );
+    
+                    if (choice === 'Accept') {
+                        // Insert the generated comment at the start of the selected code
+                        editor.edit(editBuilder => {
+                            editBuilder.insert(selection.start, `// ${commentText}\n`);
+                        });
+                    } else if (choice === 'Reject') {
+                        vscode.window.showInformationMessage('Comment rejected. No changes were made.');
+                    }
                 }
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to generate comment: ' + error);
             }
         }
     });
+    
+
+    // // Command to generate comment for selected code
+    // let generateComment = vscode.commands.registerCommand('extension.generateComment', async function () {
+    //     const editor = vscode.window.activeTextEditor;
+    //     if (editor) {
+    //         const selection = editor.selection;
+    //         const selectedText = editor.document.getText(selection);
+    //         if (!selectedText) {
+    //             vscode.window.showInformationMessage('Please select code to generate comment');
+    //             return;
+    //         }
+
+    //         try {
+    //             // Call the Python script to generate the comment
+    //             const commentText = await runPythonScript(selectedText);
+    //             if (commentText) {
+    //                 // Insert the generated comment at the start of the selected code
+    //                 editor.edit(editBuilder => {
+    //                     editBuilder.insert(selection.start, `// ${commentText}\n`);
+    //                 });
+    //             }
+    //         } catch (error) {
+    //             vscode.window.showErrorMessage('Failed to generate comment: ' + error);
+    //         }
+    //     }
+    // });
 
     // Command to translate selected comment to Chinese
     let translateComment = vscode.commands.registerCommand('extension.translateComment', async function () {
