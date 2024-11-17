@@ -106,7 +106,7 @@ function activate(context) {
                     if (choice === 'Accept') {
                         // Insert the generated comment at the start of the selected code
                         editor.edit(editBuilder => {
-                            editBuilder.insert(selection.start, `// ${commentText}\n`);
+                            editBuilder.insert(selection.start, ` ${commentText}\n`);
                         });
                     } else if (choice === 'Reject') {
                         vscode.window.showInformationMessage('Comment rejected. No changes were made.');
