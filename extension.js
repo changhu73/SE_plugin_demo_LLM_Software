@@ -152,7 +152,6 @@ function activate(context) {
     });
     
 
-    // Command to translate selected comment to Chinese
     let translateComment = vscode.commands.registerCommand('extension.translateComment', async function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -162,25 +161,44 @@ function activate(context) {
                 vscode.window.showInformationMessage('Please select a comment to translate');
                 return;
             }
-
+    
             try {
                 // Call LLM API to translate the comment
                 const translatedText = await translateToChinese(selectedText);
                 if (translatedText) {
-                    // Replace the selected text with the translated comment
-                    editor.edit(editBuilder => {
-                        editBuilder.replace(selection, translatedText);
-                    });
-
-                    // Log the translation operation
-                    logOperation('TranslateComment', {
-                        originalComment: selectedText,
-                        translatedComment: translatedText
-                    });
+                    // Show a confirmation dialog with options
+                    const choice = await vscode.window.showInformationMessage(
+                        `Generated translated comment: "${translatedText}". Do you want to accept this translation?`,
+                        { modal: false },
+                        'Accept', 'Reject'
+                    );
+    
+                    if (choice === 'Accept') {
+                        // Replace the selected text with the translated comment
+                        editor.edit(editBuilder => {
+                            editBuilder.replace(selection, translatedText);
+                        });
+    
+                        // Log the accept operation
+                        logOperation('AcceptTranslation', {
+                            originalComment: selectedText,
+                            translatedComment: translatedText,
+                            userChoice: 'Accept'
+                        });
+                    } else if (choice === 'Reject') {
+                        vscode.window.showInformationMessage('Translation rejected. No changes were made.');
+    
+                        // Log the reject operation
+                        logOperation('RejectTranslation', {
+                            originalComment: selectedText,
+                            translatedComment: translatedText,
+                            userChoice: 'Reject'
+                        });
+                    }
                 }
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to translate comment: ' + error.message);
-
+    
                 // Log the error
                 logOperation('TranslateCommentError', {
                     originalComment: selectedText,
@@ -189,6 +207,7 @@ function activate(context) {
             }
         }
     });
+    
 
     
     let correctComment = vscode.commands.registerCommand('extension.correctComment', async function () {
@@ -200,24 +219,43 @@ function activate(context) {
                 vscode.window.showInformationMessage('Please select a comment to correct');
                 return;
             }
-
+    
             try {
                 const correctedText = await correctCommentText(selectedText);
                 if (correctedText) {
-                    // Replace the selected text with the corrected comment
-                    editor.edit(editBuilder => {
-                        editBuilder.replace(selection, correctedText); // Replace instead of insert
-                    });
-
-                    // Log the correction operation
-                    logOperation('CorrectComment', {
-                        originalComment: selectedText,
-                        correctedComment: correctedText
-                    });
+                    // Show a confirmation dialog with options
+                    const choice = await vscode.window.showInformationMessage(
+                        `Generated corrected comment: "${correctedText}". Do you want to accept this correction?`,
+                        { modal: false },
+                        'Accept', 'Reject'
+                    );
+    
+                    if (choice === 'Accept') {
+                        // Replace the selected text with the corrected comment
+                        editor.edit(editBuilder => {
+                            editBuilder.replace(selection, correctedText); // Replace instead of insert
+                        });
+    
+                        // Log the accept operation
+                        logOperation('AcceptCorrection', {
+                            originalComment: selectedText,
+                            correctedComment: correctedText,
+                            userChoice: 'Accept'
+                        });
+                    } else if (choice === 'Reject') {
+                        vscode.window.showInformationMessage('Correction rejected. No changes were made.');
+    
+                        // Log the reject operation
+                        logOperation('RejectCorrection', {
+                            originalComment: selectedText,
+                            correctedComment: correctedText,
+                            userChoice: 'Reject'
+                        });
+                    }
                 }
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to correct comment: ' + error.message);
-
+    
                 // Log the error
                 logOperation('CorrectCommentError', {
                     originalComment: selectedText,
@@ -226,6 +264,7 @@ function activate(context) {
             }
         }
     });
+    
 
     
     // Register the commands

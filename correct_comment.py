@@ -18,7 +18,7 @@ def correct_comment(code_snippet):
         messages=[
             {
                 "role": "user",
-                "content": f"Please revise the corresponding comments based on the code content and retain the original format, only modify the comments with symbols, do not add anything else: \n\n{code_snippet}"
+                "content": f"The comments related to codes may be wrong, please revise the corresponding comments based on the code content and retain the original format, only modify the comments, do not add or delete anything else: \n\n{code_snippet}"
             }
         ]
     )
