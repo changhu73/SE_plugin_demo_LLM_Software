@@ -153,82 +153,81 @@ function activate(context) {
     
 
     // Command to translate selected comment to Chinese
-let translateComment = vscode.commands.registerCommand('extension.translateComment', async function () {
-    const editor = vscode.window.activeTextEditor;
-    if (editor) {
-        const selection = editor.selection;
-        const selectedText = editor.document.getText(selection);
-        if (!selectedText) {
-            vscode.window.showInformationMessage('Please select a comment to translate');
-            return;
-        }
+    let translateComment = vscode.commands.registerCommand('extension.translateComment', async function () {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const selection = editor.selection;
+            const selectedText = editor.document.getText(selection);
+            if (!selectedText) {
+                vscode.window.showInformationMessage('Please select a comment to translate');
+                return;
+            }
 
-        try {
-            // Call LLM API to translate the comment
-            const translatedText = await translateToChinese(selectedText);
-            if (translatedText) {
-                // Replace the selected text with the translated comment
-                editor.edit(editBuilder => {
-                    editBuilder.replace(selection, translatedText);
-                });
+            try {
+                // Call LLM API to translate the comment
+                const translatedText = await translateToChinese(selectedText);
+                if (translatedText) {
+                    // Replace the selected text with the translated comment
+                    editor.edit(editBuilder => {
+                        editBuilder.replace(selection, translatedText);
+                    });
 
-                // Log the translation operation
-                logOperation('TranslateComment', {
+                    // Log the translation operation
+                    logOperation('TranslateComment', {
+                        originalComment: selectedText,
+                        translatedComment: translatedText
+                    });
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage('Failed to translate comment: ' + error.message);
+
+                // Log the error
+                logOperation('TranslateCommentError', {
                     originalComment: selectedText,
-                    translatedComment: translatedText
+                    error: error.message
                 });
             }
-        } catch (error) {
-            vscode.window.showErrorMessage('Failed to translate comment: ' + error.message);
-
-            // Log the error
-            logOperation('TranslateCommentError', {
-                originalComment: selectedText,
-                error: error.message
-            });
         }
-    }
-});
+    });
 
     
-let correctComment = vscode.commands.registerCommand('extension.correctComment', async function () {
-    const editor = vscode.window.activeTextEditor;
-    if (editor) {
-        const selection = editor.selection;
-        const selectedText = editor.document.getText(selection);
-        if (!selectedText) {
-            vscode.window.showInformationMessage('Please select a comment to correct');
-            return;
-        }
+    let correctComment = vscode.commands.registerCommand('extension.correctComment', async function () {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const selection = editor.selection;
+            const selectedText = editor.document.getText(selection);
+            if (!selectedText) {
+                vscode.window.showInformationMessage('Please select a comment to correct');
+                return;
+            }
 
-        try {
-            const correctedText = await correctCommentText(selectedText);
-            if (correctedText) {
-                // Replace the selected text with the corrected comment
-                editor.edit(editBuilder => {
-                    editBuilder.replace(selection, correctedText); // Replace instead of insert
-                });
+            try {
+                const correctedText = await correctCommentText(selectedText);
+                if (correctedText) {
+                    // Replace the selected text with the corrected comment
+                    editor.edit(editBuilder => {
+                        editBuilder.replace(selection, correctedText); // Replace instead of insert
+                    });
 
-                // Log the correction operation
-                logOperation('CorrectComment', {
+                    // Log the correction operation
+                    logOperation('CorrectComment', {
+                        originalComment: selectedText,
+                        correctedComment: correctedText
+                    });
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage('Failed to correct comment: ' + error.message);
+
+                // Log the error
+                logOperation('CorrectCommentError', {
                     originalComment: selectedText,
-                    correctedComment: correctedText
+                    error: error.message
                 });
             }
-        } catch (error) {
-            vscode.window.showErrorMessage('Failed to correct comment: ' + error.message);
-
-            // Log the error
-            logOperation('CorrectCommentError', {
-                originalComment: selectedText,
-                error: error.message
-            });
         }
-    }
-});
+    });
 
     
-
     // Register the commands
     context.subscriptions.push(convertToUpperCase);
     context.subscriptions.push(convertToLowerCase);
