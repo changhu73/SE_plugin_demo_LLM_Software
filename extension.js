@@ -31,6 +31,22 @@ function runPythonScript(codeSnippet) {
     });
 }
 
+// Python script path
+function runWholePythonScript(codeSnippet) {
+    return new Promise((resolve, reject) => {
+        const pythonPath = path.join(__dirname, 'generate_whole_comment.py');
+
+        // Execute the Python script and pass the code snippet as a parameter
+        execFile('python', [pythonPath, codeSnippet], (error, stdout, stderr) => {
+            if (error) {
+                reject(`Error: ${stderr}`);
+            } else {
+                resolve(stdout.trim());  // Return the generated comment
+            }
+        });
+    });
+}
+
 // Function to call LLM API to translate text to Chinese
 function translateToChinese(codeSnippet) {
     return new Promise((resolve, reject) => {
@@ -141,6 +157,62 @@ function activate(context) {
                 }
             } catch (error) {
                 vscode.window.showErrorMessage('Failed to generate comment: ' + error);
+    
+                // Log the error
+                logOperation('GenerateCommentError', {
+                    originalCode: selectedText,
+                    error: error.message
+                });
+            }
+        }
+    });
+
+    let generateWholeComment = vscode.commands.registerCommand('extension.generateWholeComment', async function () {
+        const editor = vscode.window.activeTextEditor;
+        if (editor) {
+            const selection = editor.selection;
+            const selectedText = editor.document.getText(selection);
+            if (!selectedText) {
+                vscode.window.showInformationMessage('Please select code to generate whole comment');
+                return;
+            }
+    
+            try {
+                // Call the Python script to generate the comment
+                const commentText = await runWholePythonScript(selectedText);
+                if (commentText) {
+                    // Show a confirmation dialog with options
+                    const choice = await vscode.window.showInformationMessage(
+                        `Generated comment: "${commentText}". Do you want to accept this comment?`,
+                        { modal: false },
+                        'Accept', 'Reject'
+                    );
+    
+                    if (choice === 'Accept') {
+                        // Insert the generated comment at the start of the selected code
+                        editor.edit(editBuilder => {
+                            editBuilder.insert(selection.start, `${commentText}\n`);
+                        });
+    
+                        // Log the accept operation
+                        logOperation('AcceptComment', {
+                            originalCode: selectedText,
+                            generatedComment: commentText,
+                            userChoice: 'Accept'
+                        });
+                    } else if (choice === 'Reject') {
+                        vscode.window.showInformationMessage('Comment rejected. No changes were made.');
+    
+                        // Log the reject operation
+                        logOperation('RejectComment', {
+                            originalCode: selectedText,
+                            generatedComment: commentText,
+                            userChoice: 'Reject'
+                        });
+                    }
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage('Failed to generate whole comment: ' + error);
     
                 // Log the error
                 logOperation('GenerateCommentError', {
@@ -271,6 +343,7 @@ function activate(context) {
     context.subscriptions.push(convertToUpperCase);
     context.subscriptions.push(convertToLowerCase);
     context.subscriptions.push(generateComment);
+    context.subscriptions.push(generateWholeComment);
     context.subscriptions.push(translateComment);
     context.subscriptions.push(correctComment);
 }

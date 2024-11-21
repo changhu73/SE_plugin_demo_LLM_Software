@@ -43,7 +43,7 @@ def generate_translate(code_snippet):
         get_cnt += 1
 
     # If the task is not completed after 40 checks, return a failure message
-    return "Failed to generate comment or task timed out"
+    return "Failed to translate the comment or task timed out"
 
 # Generate the comment
 comment = generate_translate(code_snippet)
