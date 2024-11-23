@@ -3,6 +3,7 @@ const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
+//Append logs to file
 function logOperation(operation, details) {
     const logFilePath = path.join(__dirname, 'log.txt');
     const timestamp = new Date().toISOString();
@@ -47,6 +48,7 @@ function translateToChinese(codeSnippet) {
     });
 }
 
+//Correct note text
 function correctCommentText(commentText) {
     return new Promise((resolve, reject) => {
         const pythonPath = path.join(__dirname, 'correct_comment.py');
@@ -65,6 +67,7 @@ function activate(context) {
     let convertToUpperCase = vscode.commands.registerCommand('extension.convertToUpperCase', function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
+            //Get the selected text
             const selection = editor.selection;
             const selectedText = editor.document.getText(selection);
             if (!selectedText) {
@@ -72,6 +75,7 @@ function activate(context) {
                 return;
             }
             const upperCaseText = selectedText.toUpperCase();
+            //Replace the selected text
             editor.edit(editBuilder => {
                 editBuilder.replace(selection, upperCaseText);
             });
@@ -82,6 +86,7 @@ function activate(context) {
     let convertToLowerCase = vscode.commands.registerCommand('extension.convertToLowerCase', function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
+            //The currently selected text range
             const selection = editor.selection;
             const selectedText = editor.document.getText(selection);
             if (!selectedText) {
@@ -95,6 +100,7 @@ function activate(context) {
         }
     });
 
+    //Generate comments for selected code
     let generateComment = vscode.commands.registerCommand('extension.generateComment', async function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -129,6 +135,7 @@ function activate(context) {
                             userChoice: 'Accept'
                         });
                     } else if (choice === 'Reject') {
+                        //Prompt the user that no content has been modified
                         vscode.window.showInformationMessage('Comment rejected. No changes were made.');
     
                         // Log the reject operation
@@ -151,7 +158,7 @@ function activate(context) {
         }
     });
     
-
+    //Translate comments into Chinese and provide confirmation options
     let translateComment = vscode.commands.registerCommand('extension.translateComment', async function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -209,7 +216,7 @@ function activate(context) {
     });
     
 
-    
+    //Correct the user-selected annotation
     let correctComment = vscode.commands.registerCommand('extension.correctComment', async function () {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -221,6 +228,7 @@ function activate(context) {
             }
     
             try {
+                //Call the asynchronous method correctCommentText to try to correct the selected comment text
                 const correctedText = await correctCommentText(selectedText);
                 if (correctedText) {
                     // Show a confirmation dialog with options
