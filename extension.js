@@ -31,6 +31,7 @@ function runPythonScript(codeSnippet) {
     });
 }
 
+
 // Python script path
 function runWholePythonScript(codeSnippet) {
     return new Promise((resolve, reject) => {

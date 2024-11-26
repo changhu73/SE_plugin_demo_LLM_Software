@@ -48,4 +48,5 @@ def generate_whole_comment(code_snippet):
 # Generate the comment
 comment = generate_whole_comment(code_snippet)
 # Print the generated comment
+
 print(comment)

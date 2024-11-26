@@ -11,6 +11,7 @@ code_snippet = sys.argv[1]
 # Replace with your own API key
 client = ZhipuAI(api_key="6a7189b8e74f19128e8b181a70a3b47c.rWOEtdYJR4dwVmnS")
 
+
 def generate_translate(code_snippet):
     # Send a request to ZhipuAI API with the user's code snippet and request comment generation
     response = client.chat.asyncCompletions.create(
