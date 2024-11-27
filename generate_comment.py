@@ -18,7 +18,7 @@ def generate_comment(code_snippet):
         messages=[
             {
                 "role": "user",
-                "content": f"Based on the code, please provide accurate comments, Each line in your comment begins with the vscode comment symbol corresponding to the language in which the code you are commenting is written, do not add anything else, no need to put ``` before and after the code: \n\n{code_snippet}"
+                "content": f"Based on the code, please provide accurate comments, Each line in your comment begins with the vscode comment symbol corresponding to the language in which the code you are commenting is written, if you select something other than code, output 'No code detected'.Do not add anything else, no need to put ``` before and after the code: \n\n{code_snippet}"
             }
         ]
     )

@@ -1,4 +1,6 @@
 # Comments translated from code comments
+# これは日本語ですそれを中国語に訳してくれませんか
+# 这是日语，不能翻译成中文吗
 def add(x, y):  # 函数用于计算两个数的和
     return x + y
 
