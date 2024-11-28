@@ -11,14 +11,14 @@ code_snippet = sys.argv[1]
 # Replace with your own API key
 client = ZhipuAI(api_key="6a7189b8e74f19128e8b181a70a3b47c.rWOEtdYJR4dwVmnS")
 
-def generate_comment(code_snippet):
-    # Send a request to ZhipuAI API with the user's code snippet and request comment generation
+def generate_whole_comment(code_snippet):
+    # Send a request to ZhipuAI API to provide a summary of the code's overall functionality
     response = client.chat.asyncCompletions.create(
-        model="glm-4-flash",  # Use the glm-4 model to generate the comment
+        model="glm-4-flash",  # Use the glm-4 model
         messages=[
             {
                 "role": "user",
-                "content": f"Based on the code, please provide accurate comments, Each line in your comment begins with the vscode comment symbol corresponding to the language in which the code you are commenting is written, if you select something other than code, output 'No code detected'.Do not add anything else, no need to put ``` before and after the code: \n\n{code_snippet}"
+                "content": f"Please comment on the following code as a whole, each line in your comment begins with the vscode comment symbol corresponding to the language in which the code you are commenting is written, You need to give me an overall comment instead of commenting on each line of code, and automatically wrap lines based on comment length, each line should be no more than fifteen words:  \n\n{code_snippet}"
             }
         ]
     )
@@ -43,9 +43,10 @@ def generate_comment(code_snippet):
         get_cnt += 1
 
     # If the task is not completed after 40 checks, return a failure message
-    return "Failed to generate comment or task timed out"
+    return "Failed to generate a global comment for the entire code or task timed out"
 
 # Generate the comment
-comment = generate_comment(code_snippet)
+comment = generate_whole_comment(code_snippet)
 # Print the generated comment
+
 print(comment)
