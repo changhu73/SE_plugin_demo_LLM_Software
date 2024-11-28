@@ -9,6 +9,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 code_snippet = sys.argv[1]
 
 # Replace with your own API key
+# TODO: add api key configuration
 client = ZhipuAI(api_key="6a7189b8e74f19128e8b181a70a3b47c.rWOEtdYJR4dwVmnS")
 
 def generate_comment(code_snippet):
